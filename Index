@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reaction Time</title>
+
+    <style>
+        body {
+            background: black;
+            color: white;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+        }
+
+        h1 {
+            margin-top: 40px;
+        }
+
+        #game {
+            background: #292929;
+            height: 300px;
+            margin: 30px auto;
+            max-width: 600px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 25px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border-radius: 8px;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>⚡ Reaction Time</h1>
+    <p>Click start, then click the box as soon as it turns green!</p>
+
+    <div id="game">Press Start to Play</div>
+    <button onclick="startGame()">Start</button>
+    <h2 id="result">Your time: --</h2>
+
+    <script>
+        let state = "idle";
+        let startTime;
+        let timer;
+
+        const game = document.getElementById("game");
+        const result = document.getElementById("result");
+
+        function startGame() {
+            clearTimeout(timer);
+            state = "waiting";
+            game.style.background = "#292929";
+            game.textContent = "Wait for GREEN...";
+            result.textContent = "Your time: --";
+
+            const delay = 1500 + Math.random() * 3500;
+
+            timer = setTimeout(() => {
+                state = "ready";
+                game.style.background = "green";
+                game.textContent = "CLICK NOW!";
+                startTime = performance.now();
+            }, delay);
+        }
+
+        game.addEventListener("click", () => {
+            if (state === "waiting") {
+                clearTimeout(timer);
+                state = "idle";
+                game.style.background = "red";
+                game.textContent = "Too early! Try again.";
+                result.textContent = "You clicked too soon!";
+            } else if (state === "ready") {
+                const reaction = Math.round(
+                    performance.now() - startTime
+                );
+
+                state = "idle";
+                game.style.background = "#292929";
+                game.textContent = "Finished! Press Start again.";
+                result.innerHTML = "YOUR REACTION TIME<br><span style='font-size:48px;color:#00ff66'>" 
+    + reaction + " ms</span>";
+            }
+        });
+    </script>
+</body>
+</html>
